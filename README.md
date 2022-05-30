@@ -128,11 +128,15 @@
 ### 📜 Servlet Container 란?
 - 말 그대로 **서블릿을 담고 관리해주는 컨테이너**. 서블릿 컨테이너는 구현되어 있는 servlet 클래스의 규칙에 맞게 **서블릿을 관리**해주며, **클라이언트에서 요청**을 하면 컨테이너는 **HttpServletRequest, HttpServletResponse** 두 객체를 생성하여 post, get 여부에 따라 **동적인 페이지를 생성하여 응답을 보낸다**.
 
-#### 📜 HttpServletRequest
+### 📜 HttpServletRequest
 - Http 프로토콜의 **request 정보를 서블릿에게 전달하기 위한 목적으로 사용**되며 **헤더 정보, 파라미터, 쿠키, URI, URL 등의 정보**를 읽어 들이는 메서드와 Body의 Stream을 읽어 들이는 메서드를 가지고 있다.
 
-#### 📜 HttpServletResponse
+### 📜 HttpServletResponse
 - WAS는 어떤 클라이언트가 요청을 보냈는지 알고 있고, **해당 클라이언트에게 응답을 보내기 위한 HttpServletRequest 객체를 생성하여 서블릿에게 전달**하고 **이 객체를 활용하여 content Type, 응답 코드, 응답 메시지 등을 전송**한다.
 
+
+### 📜 View의 참조 위치
+- 기본적으로는 **src/main/webapp/WEB-INF/spring/Secret/servlet-context.xml**에 있는 **InternalResourceViewResolver가 설정한 prefix와 suffix 정보가 적용된 경로**의 .jsp 파일을 찾는다.
+- 보통은 **/WEB-INF/view/*.jsp** 경로
 
 
