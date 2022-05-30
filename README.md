@@ -43,12 +43,13 @@
 -	주요 용도는 JSON/XML 형태로 객체 데이터 반환을 목적으로 한다.
 
 ### Service란 ?
--	웹 요청 처리 과정
+-	**웹 요청 처리 과정**
 -	1. Client가 Request를 보낸다. (Ajax, Axios, Fecth 등등 …)
 -	2. Request URL 경로에 해당하는 알맞은 Controller가 요청을 수신 받는다 (@Controller, @RestController)
 -	3. Controller는 넘어온 요청을 처리하기 위해 Service를 호출한다.
 -	4. Service는 알맞은 정보를 가공하여 Controller에게 데이터를 넘긴다.
 -	5. Controller는 Service의 결과물을 CLient에게 전달해준다.
+
 -	Service가 알맞은 정보를 가공하는 과정을 ‘비즈니스 로직을 수행한다’ 라고 한다.
 -	Service가 비즈니스 로직을 수행하고 데이터베이스에 접근하는 DAO를 이용해서 결과값을 받아 온다.
 
