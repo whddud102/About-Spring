@@ -185,3 +185,63 @@
      ```JSP
      <% taglib uri="/META-INF/mytag.tld" prefix="mytag"%>
      ```
+     
+     ### Spring tiles (스프링 타일즈)
+     - 뷰페이지의 jsp들을 상단, 사이드, 메인, 하단을 설정 상태로 include 처리해주는 구조의 템플릿을 말한다.
+     - 페이지들을 일괄 관리할 수 있고, 공통사용하는 부분들을 매번 따로 등록 해주지 않아도 되기 때문에 편리하다.
+     
+     ### 설정 방법
+     
+     **1. pom.xml - 라이브러리 추가**
+     
+     ![image](https://user-images.githubusercontent.com/59597955/171816843-54bc2982-6e88-418a-af8e-41ca5b82d244.png)
+
+     ![image](https://user-images.githubusercontent.com/59597955/171816904-ad1e1c4b-047a-4bb4-97a2-4eac06b6e527.png)
+    
+     **2. 상단, 사이드, 메인, 하단으로 사용할 jsp들을 생성, 나중에 타일즈 설정파일을 통해 연결 예정**. 
+     
+     WEB-INF/views/tiles라는 디렉토리를 만들고 안에 각각 JSP들을 구성
+     
+     ![image](https://user-images.githubusercontent.com/59597955/171817133-bee7ed36-4280-44e5-8bff-5e8ad09b68f0.png)
+
+
+    **3. servlet-context.xml에 InternalResourceViewResolver를 변경 및 tiles설정을 추가.**
+
+    servlet-context.xml
+    
+    ![image](https://user-images.githubusercontent.com/59597955/171817385-2db231b6-6329-494b-8177-98c124626a91.png)
+
+    order 부분을 유의해서 설정. tiles가 우선순위가 되도록 해주어야 함.
+    
+    servlet-context.xml을 추가했으면 beans:value에 처리한 tiles-define.xml을 생성하고 설정
+    
+    ![image](https://user-images.githubusercontent.com/59597955/171818037-0101254b-68c3-4a36-a891-f1cd02c8ab08.png)
+
+   
+     **4. tiles-define.xml 설정**
+     
+     ![image](https://user-images.githubusercontent.com/59597955/171818307-3807553c-14e3-48b4-8556-e82e286788bd.png)
+    
+     - 이 부분에서 상단, 사이드, 바닥 메인으로 사용할 템플릿 등을 설정
+     - definition에서 name은 변수처럼 사용할 이름을 지정
+     - template은 사용할 jsp를 지정
+     - 그 내부에는 따라오는 헤더, 사이드, 바닥 jsp들을 처리하고 마찬가지로 name은 사용할 이름, value에는 실제로 들어갈 jsp를 입력
+
+     - 먼저 생성해 놓은 JSP 중 tiles-layout.jsp를 메인으로 사용하고 각각 header sidebar, footer 부분을 영역별로 사용할 예정.
+     - 아래서 extends 부분은 위에서 선언한 jsp를 상속받아 실제로 사용하는 페이지에 이식하고 body 영역은 실제 페이지를 사용하기 위해 설정하는 부분으로 메인 body로 쓸 jsp 영역을 설정할 수 있으며, {1}/{2}.jsp을 통해 board/board.jsp로 갈 때 자연스럽게 이식되어 사용할 수 있게 합니다.
+     
+     ![image](https://user-images.githubusercontent.com/59597955/171819913-39883725-11dd-4149-ade3-1a67b5bcbf84.png)
+
+    ![image](https://user-images.githubusercontent.com/59597955/171819946-08b86a78-9fee-41d8-8e95-d7f00f15eb47.png)
+
+    ![image](https://user-images.githubusercontent.com/59597955/171819979-289e3a42-7728-4549-ba3b-2f8720198eb4.png)
+
+    ![image](https://user-images.githubusercontent.com/59597955/171820116-2fe1a38e-0c2e-4084-ba25-c2d530f06cb1.png)
+
+    공통변수 처리부분이나 script부분은 무시해도 된다.
+
+    tiles-define.xml에서 각각 JSP들을 불러왔으니 사용. 해당페이지에서 원하는 영역에 삽입을 할 수 있음.
+
+    **<tiles:insertAttribute name="사용할 이름" />** 을 통해 적용. 
+    
+    
