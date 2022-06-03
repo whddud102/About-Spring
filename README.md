@@ -139,7 +139,49 @@
 - 기본적으로는 **src/main/webapp/WEB-INF/spring/Secret/servlet-context.xml**에 있는 **InternalResourceViewResolver가 설정한 prefix와 suffix 정보가 적용된 경로**의 .jsp 파일을 찾는다.
 - 보통은 **/WEB-INF/view/*.jsp** 경로
 
+### 📜 JSP 지시어 
+- 지시어는 해당하는 JSP 파일의 속성을 기술 하는 곳으로, JSP 컨테이너에게 해당 페이지를 어떻게 처리해야 하는지 전달하기 위한 내용을 담는다.
+- 크게 아래 세 종류의 지시어로 나눌 수 있으며, 각각의 속성이 다르다.
+    1. page
+    2. include
+    3. taglib
 
-![image](https://user-images.githubusercontent.com/59597955/171596494-920da345-fa99-48e7-9016-143239820a48.png)
+    #### page 지시어
+    - 현재의 JSP 페이지를 컨테이너에서 처리하는데 필요한 각종 속성을 기술하는 부분
+    - 형식 지정에 필요한 contentType, 자바 클래스 사용에 필요한 import, 오류 페이지 관리에 필요한 errorPage, isErrorPage 등을 가장 많이 사용.
+    <br>
+    
+    ![image](https://user-images.githubusercontent.com/59597955/171810006-5f261e1f-b268-41c8-98bf-6c6de49365e6.png)
+    
+    <br>
+    🔎 사용 예
+    
+    ```JSP 
+    <% page contentType="text/html;charset=UTF-8" errorPage="error.jsp" %>
+    <% page import="java.util.*"%>
+    ```
 
+    #### include 지시어
+    - 현재 JSP 파일에 다른 HTML이나 JSP 문서를 포함하기 위한 기능
+    - include 액션과 비슷한 기능
+    - 여러 페이지에 공통으로 들어가는 내용을 관리할 떄 유용
+    - include 하는 개별 파일은 개별적으로 컴파일된 클래스를 생성하지 않는다.
+    - 각각의 파일을 모두 포함한 뒤 하나의 컴파일 클래스를 생성함.
+    <br>
+    🔎 사용 예
+    
+    ```JSP 
+    <% include file="파일명.jsp"%>
+    ```
+    
+    #### taglib 지시어
+    - JSP 기능을 확장하기 위해 만들어진 커스텀 태그 라이브러리를 JSP 파일에서 사용하기 위한 지시어
+    - 태그 라이브러리는 복잡하고 반복되는 작업을 간단한 태그 형태로 만들어 파일 구성의 일관성을 유지하며, 유지보수의 효율성을 높이려는 목적으로 사용됨
+    - 한편으로는, 커스텀 태크 라이브러리를 너무 많이 사용하면 호환성이 떨어지고, 태그 라이브러리에 대한 이해를 위해 별도 학습이 필요하다는 문제점이 있음.
 
+     <br>
+    🔎 사용 예
+    
+     ```JSP
+     <% taglib uri="/META-INF/mytag.tld" prefix="mytag"%>
+     ```
