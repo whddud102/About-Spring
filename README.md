@@ -1,8 +1,196 @@
 # 📌 스프링 관련 내용 정리 📌
 
+### DI(Dependency Injection)란?
+- DI(의존성 주입)란, 클래스간의 의존관계를 스프링 컨테이너가 자동으로 연결해주는 것을 말한다.
+* Dependancy란, 객체가 다른 객체와 상호작용하는 것을 말한다.
+* 클래스 A가 클래스 B,C와 상호작용한다면 객체 A는 객체B,C와 의존관계이다.
+
 ### 📜 어노테이션
 **@Controller**
 -	해당 어노테이션이 적용된 클래스는 “Controller”임을 나타내고, bean으로 등록되며 해당 클래스가 Controller로 사용됨을  Spring Framework에 알림.
+
+
+### 📜 @Autowired ###
+**@Autowired란?**
+- @Autowired는 의존성 주입을 할 때 사용하는 어노테이션으로 **객체의 타입**에 해당하는 bean을 찾아 주입하는 역할을 한다.
+
+**@Autowired를 사용할 수 있는 위치**
+- @Autowired는 기본적으로 아래의 위치에서 사용할 수 있다.
+- 생성자(스프링 4.3 부터는 생략 가능)
+- Setter
+- 필드
+
+**사용시 주의점**
+- 해당 타입의 bean이 없거나 1개인 경우
+
+**생성자에 @Autowired 명시 (스프링 4.3 부터는 생략가능)**
+
+```java
+@Service
+pbulic class TestService {
+  TestRepository testRepository;
+  
+  @Autowired
+  public TestService(TestRepository testRepository) {
+     this.testRepository = testRepository;
+  }
+}
+```
+```java
+public class TestRepository {
+ ....
+}
+```
+- 위의 코드에서 TestRepository의 의존성 주입이 작동할까? **당연히 작동하지 않는다.**
+- @Auotowired는 **의존 객체의 타입**에 해당하는 **bean을 찾아서 주입**하기 때문이다.
+- 즉, TestRepository는 **bean으로 등록되어 있지 않기 때문**에 스프링이 **bean을 찾지 못해 의존성을 주입할 수 없다**.
+
+- 이를 작동하게 하기 위해서는 TestRepository를 bean으로 등록하기 위해 @Repository 혹은 @Componet 어노테이션을 이용해 TestRepository를 bean으로 등록해주면 된다. 
+
+```java
+@Repository
+public class TestRepository {
+ ....
+}
+```
+
+**Setter에 @Autoriwred 명시**
+
+```java
+@Service
+pbulic class TestService {
+  TestRepository testRepository;
+  
+  @Autowired
+  //@Autowired(required = false)
+  public void setTestRepository(TestRepository testRepository) {
+     this.testRepository = testRepository;
+  }
+}
+```
+```java
+public class TestRepository {
+ ....
+}
+```
+
+- 이번엔 Setter를 이용해 의존성 주입을 시도해보자. 하지만 이역시 작동하지 않는다.
+- Setter로 TestService 자체의 인스턴스를 만들었는데 왜 작동을 안 할까?
+- 그 이유는 @Autowired Annotation 때문이다.
+- @Autowired가 명시되어 있기 때문에 스프링은 의존성을 주입하려고 시도한다.
+- setter를 이용해 인스턴스를 생성할 수 있지만, 의존성 주입에는 실패하는 것이다.
+
+- @Autowired(requred = false) 옵션을 주면 의존성 주입을 받지 않고 인스턴스를 만들어서 bean으로 등록할 수 있다.
+- 즉, TestRepository는 의존성 주입이 되지 않은 상태로 bean이 등록된다.
+
+**필드에 @Autowired 명시**
+
+```java
+@Service
+pbulic class TestService {
+ 
+ @Autowired
+ //@Autowired(required = false)
+ TestRepository testRepository;
+}
+```
+
+```java
+public class TestRepository {
+   ...
+}
+```
+
+- 필드 위에 @Autowired 명시
+- setter나 필드 injection을 사용할 때는 Optional 설정(Requied = false)을 통해 TestService가 해당하는 의존성 없이도 bean으로 등록할 수 있다.
+
+**해당하는 타입의 bean이 여러 개인 경우**
+```java
+@Service
+public class TestService {
+	
+    @Autowired
+    TestRepository testRepository;
+}
+```
+
+```java
+public interface TestRepository {
+	....
+}
+
+@Repository
+public class MyTestRepository implements TestRepository {
+  // TestRepository의 구현체
+}
+
+@Repository
+public class ExampleRepository implements TestRepository {
+  // TestRepository의 구현체
+}
+```
+
+- TestService는 TestRepository를 사용하는데, TestRepository는 인터페이스이고 이를 구현하는 Repository bean 두 개가 존재한다고 생각해보자.
+- 스프링은 TestService에는 어떤 Repository를 주입해줄까? 스프링은 개발자가 원하는 의존성을 알지 못하기 때문에 주입을 못해준다.
+- 따라서 같은 타입의 bean을 두 개 발견했다는 에러 메시지를 뱉고, 다음과 같은 액션을 추천해준다.
+
+- @Primary
+- 해당 타입의 bean 모두 주입받기
+- @Qulifier(bean id)
+
+**1. @Primary**
+- @Primary Annotation은 같은 타입의 bean이 여러 개 주입될 경우 @Primary가 붙은 bean을 주입하겠다는 의미를 가지고 있다.
+
+```java
+public interface TestRepository {
+	....
+}
+
+@Repository @Primary   // 이 구현체가 주입이 됌
+public class MyTestRepository implements TestRepository {
+  // TestRepository의 구현체
+}
+
+@Repository
+public class ExampleRepository implements TestRepository {
+  // TestRepository의 구현체
+}
+```
+
+- @Repository 옆에 명시
+- 같은 타입의 TestRepository가 주입되었을 때 MyTestRepository가 주입된다.
+
+**2. @Qulifier**
+
+- bean의 ID로 지정을 해주는 것 같다.
+
+```java
+@Service
+public class TestService {
+	
+    @Autowired @Qulifier("myTestRepository")   // bean의 Id는 lower Camel Case를 사용한다.
+    TestRepository testRepository;
+}
+```
+
+- @Autowired 옆에 명시
+- @Primary와 마찬가지로 MyTestRepository가 주입된다.
+- @Primary가 @Qulifier보다 Type safe 하기 때문에 @Primary를 사용하는 것을 추천
+
+**3. 해당 타입의 bean 모두 주입**
+
+'''java
+@Service
+public class TestService {
+	
+    @Autowired
+    List<TestRepository> testRepositoies;
+}
+```
+
+- List로 같은 타입의 모든 bean을 주입받을 수 있다.
+
+
 
 
 ### 📜 MVC 패턴이란?
@@ -249,3 +437,4 @@
     - 조회한 데이터를 return 한다고 해도 의도치 않게 데이터가 변경되는 일을 사전에 방지해줌.
     - DB 서버의 부하를 줄이고 약간의 최적화를 할 수 있다.
     - 코드를 접하는 사람들이 직관적으로 보기에도 해당 메서드는 READ 동작만 수행할 것이라고 예상 가능.
+
