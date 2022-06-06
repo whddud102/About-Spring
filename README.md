@@ -5,6 +5,185 @@
 * Dependancy란, 객체가 다른 객체와 상호작용하는 것을 말한다.
 * 클래스 A가 클래스 B,C와 상호작용한다면 객체 A는 객체B,C와 의존관계이다.
 
+- Inversion of Control (제어 역전) 이라고도 하는 의존 관계 주입(Depenecy Injection)이라고도 하며, 어떤 객체가 사용하는 의존 객체를 사용자가 직접 만들어서 사용하는게 아니라, 주입 받아 사용하는 방법이다. (new 연산자를 이용해서 객체를 생성하는 것이라고 생각하면 된다)
+
+
+**의존성 예시와 정리**
+
+```java
+@Service
+public class BookService {
+
+    private BookRepository bookRepository;
+
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;  // 생성시 BookRepository가 필요, BookRepository와 의존 관계
+    }
+}
+
+@Service
+public class BookRepository {
+      // DI Test
+}
+```
+
+- 위 코드와 같이 BookService 클래스가 만들어 지기 위해서는 BooRepository 클래스를 필요로 한다. 이것을 BookService 클래스는 BookRepository 클래스의 의존성을 가진다 라고 한다. 
+- 이와 같이 코드를 설계하였을 때, 코드의 재활용성이 떨어지고, 위 예제에서 BookRepository 클래스가 수정 되었을 때, BookService 클래스도 함께 수정해야하는 문제가 발생한다.
+- 즉, 결합도(coupling)가 높아지게 된다.
+- 그리고 위의 코드에서, BookRepository라는 클래스를 직접 new를 사용하여 객체를 주입하는 것이 아니라 생성자를 사용하여 주입받는 것을 Inversion of Control 이라고 한다.
+
+**강한 결합**
+- 객체 내부에서 다른 객체를 생성하는 것은 강한 결합도를 가지는 구조이다. A 클래스 내부에서 B 라는 객체를 직접 생성하고 있다면, B 객체를 C 객체로 바꾸고 싶은 경우에 A 클래스도 수정해야 하는 방식이기 때문에 강한 결합이다.
+
+**느슨한 결합**
+- 느슨한 결합은 외부에서 생성된 객체를 인터페이스를 통해서 넘겨받는 것이다. 이렇게 하면 결합도를 낮출 수 있고, 런타임시에 의존관계가 결정되기 때문에 유연한 구조를 가진다.
+
+- 추가적으로 BookService와 BookRepository가 둘다 Bean으로 등록되어 있을 때 BookService의 생성자만 만들어주면 스프링 IoC 컨테이너가 BookRepository에 의존성 주입을 알아서 해준다.(스프링 4.3 이후부터는 생성자가 하나인 경우는 @Autowired를 사용하지 않아도 된다)
+
+- 생성자가 하나인 경우는 자동으로 @Autowired 어노테이션이 적용이 되고, 생성자의 매개변수가 bean으로 등록이 되어 있다면 생성시점에, 스프링에서 알아서 의존성을 주입해준다.
+
+
+- 스프링의 의존성 주입이 없다면 직접 new 연산자로 의존성을 주입해주어야 한다.
+- 
+```java
+import org.junit.Test;
+
+public class BookServiceTest {
+
+    @Test
+    public void save() {
+    	// 직접 BookService에 필요한 BookRepository 생성 후, 의존성 주입
+        BookRepository bookRepository = new BookRepository();
+        BookService bookService = new BookService(bookRepository);	
+    }
+}
+```
+- 이런식으로 코드를 사용하지 않고 스프링이 제공하는 IoC 컨테이너를 사용하는 이유는 지금까지의 개발자의 노하우와 여러 가장 좋은 기능들이 IoC 컨테이너에 쌓여있기 때문에 사용하는 것이다. 
+
+### 스프링 IoC 컨테이너란? 
+- 가장 중요한 인터페이스는 BeanFactory, ApplicatonContext이다
+- 애플리케이션 컴포넌트의 중앙 저장소이다.
+- bean 설정 소스파일로 부터 bean 정의를 읽어들이고, bean을 구성하고 제공한다.
+- bean들의 의존 관계를 설정해준다.(객체의 생성을 책임지고, 의존성을 관리한다)
+
+![image](https://user-images.githubusercontent.com/59597955/172166054-7277bb38-c174-468f-84d6-616b1a535000.png)
+
+
+
+**POJO**
+![image](https://user-images.githubusercontent.com/59597955/172166177-7f3f8870-0473-4a8f-bea3-a95237ca0e10.png)
+
+- Plain Old Java Object, 직역하면 오래된 방식의 자바 객체라는 뜻으로 평범하고 단순한 자바 클래스를 의미한다. 
+- 종속되지 않는다는 것은 코드를 간결히 할 수 있고, 객체지향 설계를 충실히 이행하고 있음을 보여준다.
+
+- 스프링 특징을 보다보면 POJO라는 단어가 존재한다. 과거에는 자바로 웹 어플리케이션을 개발하기 위해서는 Servlet 클래스를 상속받아서 사용했다. 이 Servlet 클래스는 POJO가 아닌 것이다. 
+- 즉 Servlet 클래스를 작성하지 않고, Servlet 클래스의 상속 없이 POJO만으로 웹 어플리케이션을 개발할 수 있다는 것이 스프링의 특징이다. 
+
+### 스프링 컨테이너 종류
+
+**BeanFactory**
+
+- 스프링 빈 컨테이너에 접근하기 위한 최상위 인터페이스이다.
+
+- Bean 객체를 생성하고 관리하는 인터페이스이다. 디자인패턴의 일종인 팩토리 패턴을 구현한 것이다. 
+- BeanFactory 컨테이너는 구동될 때 Bean 객체를 생성하는 것이 아니라. 클라이언트의 요청이 있을 때(getBean()) 객체를 생성한다.
+
+**ApplicationContext**
+- ListableBeanFactory(BeanFactory에 하위 인터페이스이며, Bean을 Listable하게 보관하는 인터페이스를 말한다. 
+- 대표적으로 DefaultListableBeanFactory 클래스)를 상속하고 있으며, 여러 기능(ResourceLoader, ApplicationEventPublisher, MessageSource, Bean Lifecycle)을 추가로 제공한다.
+
+- BeanFactory를 상속받은 interface이며, ApplicationContext 컨테이너는 구동되는 시점에 등록된 Bean 객체들을 스캔하여 객체화한다
+
+
+### 빈(Bean)이란 무엇인가?
+
+- 스프링 IoC 컨테이너가 관리하는 객체
+- 빈으로 등록됐을 때의 장점
+	-스프링 IoC 컨테이너에 등록된 Bean들은 의존성 관리가 수월해진다. 
+	-스프링 IoC 컨테이너에 등록된 Bean들은 싱글톤의 형태이다.
+	
+* singleton : 기본(Default) 싱글톤 스코프. 하나의 Bean 정의에 대해서 Container 내에 단 하나의 객체만 존재한다.
+* prototype : 어플리케이션에서 요청시 (getBean()) 마다 스프링이 새 인스턴스를 생성
+
+
+### 빈을 등록하는 방법
+
+**1. xml 설정파일을 통한 등록**
+
+예전에 스프링에서는 xml에서 하나하나 bean을 등록해 사용하였다 예를들면 아래 코드와 같다.
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="bookService" class="com.example.demo.BookService">
+        <property name="bookRepository" ref="bookRepository" />
+    </bean>
+
+    <bean id="bookRepository" class="com.example.demo.BookRepository">
+    </bean>
+
+</beans>
+```
+
+- 위와 같은 xml 파일에서 bean을 하나하나 등록하여 사용하였다. 예전에는 그냥 이런식으로 했구나 정도만 받아들이자. 
+- 이렇게 하나하나 Bean으로 등록하는 방법은 굉장히 번거롭기 때문에 새로운 방법이 등장했는데 그것이 바로 component-scan이다. 
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.example.demo"/>
+
+</beans>
+```
+
+- 이번에도 xml 파일 안에서 component-scan을 사용하여 base-package에 현재 패키지 이름을 작성하면 Class-Path 아래에 **@Repository**, **@Service** 등의 **Bean으로 등록할 수 있는 어노테이션을 찾아서 Bean으로 등록을 해준다**.(Component-Scan은 아래에서 다시 설명한다) 하지만 여기서 다시 자바코드로 빈을 등록할 수 있는 없을까? 라는 의문이 생겼다.
+
+
+**2. Java 코드를 이용해서 Bean 등록**
+
+```java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ApplicationConfig {
+
+    @Bean
+    public BookRepository bookRepository() {
+        return new BookRepository();
+    }
+
+    @Bean
+    public BookService bookService() {
+        BookService bookService = new BookService();
+        bookService.setBookRepository(bookRepository());
+        return bookService;
+    }
+}
+```
+
+- 위와 같이 ApplicationConfig 라는 자바파일을 만들 후에, @Configuration이라는 어노테이션을 달고 빈으로 등록할 곳에 @Bean 어노테이션과 함께 코드를 작성하면 빈으로 등록이 된다. 하지만 이것도 하나하나 빈으로 등록해야 하는 번거로움이 있기 때문에 좋은 것 같지 않다. 그래서 하나 더 나온 방법이 현재 스프링부트에 가장 가까운 방법이다.
+- Spring-Boot는 어노테이션을 통해 Bean을 설정하고 주입받는 것을 표준으로 삼는다.
+
+
+#### Container에 Spring Bean으로 등록시켜주는 Annotation
+- ex) @Bean, @Component, @Controller, @Service, @Repository 
+- **@Bean**은 개발자가 컨트롤 할 수 없는 **외부 라이브러리**를 Bean으로 등록하고 싶은 경우 (메소드로 return 되는 객체를 Bean으로 등록) 
+- **@Component**는 개발자가 직접 컨트롤할 수 있는 클래스(**직접 만든**)를 Bean으로 등록하고 싶은 경우 (선언된 Class를 Bean으로 등록) 
+
+- **@Controller, @Service, @Repository** 등 은 **@Component를** 비즈니스 레이어에 따라 **명칭을 달리 지정해준 것** 
+
+#### Container에 있는 Spring Bean을 찾아서 주입시켜주는 Annotation
+- @Autowired : IoC 컨테이너에 있는 참조할 Bean을 찾아 주입한다. (SPRING 표준)
+
+
 ### 📜 어노테이션
 **@Controller**
 -	해당 어노테이션이 적용된 클래스는 “Controller”임을 나타내고, bean으로 등록되며 해당 클래스가 Controller로 사용됨을  Spring Framework에 알림.
@@ -20,8 +199,59 @@
 - Setter
 - 필드
 
+- 위의 3가지의 경우에 Autowired를 사용할 수 있다. 
+- 그리고 Autowired는 기본값이 true이기 때문에 의존성 주입을 할 대상을 찾지 못한다면 애플리케이션 구동에 실패한다. 
+- 그러면 Autowired를 사용할 때의 경우의 수가 존재하는데 각각의 상황에 대해서 정리해보자.
+
 **사용시 주의점**
 - 해당 타입의 bean이 없거나 1개인 경우
+
+#### 생성자로 의존성 주입
+
+- 생성자 주입은 생성자에 의존성 주입을 받고자 하는 field를 나열하는 방법으로, 권고되는 방법의 하나 이다.
+
+**장점**
+- 필수적으로 사용해야 하는 레퍼런스 없이는 **인스턴스를 아예 만들지 못하도록 강제함**
+- Spring 4.3 이상부터는 생성자가 하나인 경우 @Autowired를 사용하지 않아도 됨
+- 생성자에 점차 많은 의존성이 추가 될 경우 리팩토링 시점을 감지 할 수 있음
+- 의존성 주입 대상 필드를 final로 불편 객체 선언할 수 있음
+- 테스트 코드 작성시 생성자를 통해 의존성 주입이 용이함
+
+**단점**
+- 어쩔 수 없는 순환 참조는 생성자 주입으로 해결하기 어려움
+- 이러한 경우에는 나머지 주입 방법 중에 하나를 사용
+- 가급적이면 순환 참조가 발생하지 않도록 하는 것이 더 중요
+
+
+#### 필드 의존성 주입
+
+- **멤버 필드에 @Autowired annotation을 선언**하여 주입받는 방법이다.
+
+**장점**
+- 가장 간단한 선언 방식
+
+**단점**
+- 의존 관계가 눈에 잘 보이지 않아 추상적이고, 이로 인해 의존성 관계가 과도하게 복잡해질 수 있음
+- 반대로 생성자 주입과 Setter 주입은 의존성을 명확하게 커뮤니케이션 함
+- DI Container와 강한 결합을 가져 외부 사용이 용이하지 않음
+- 단위 테스트시 의존성 주입이 용이하지 않음
+- 의존성 주입 대상 필드가 final 선언 불가
+
+
+#### Setter 의존성 주입
+
+- **setter 메소드에 @Autowired annotation을 선언**하여 주입받는 방법이다.(메소드 이름을 setter 대신에 다른 걸로 하여도 주입은 가능하지만 좋은 방법은 아니다) 
+
+**장점**
+- 의존성이 **선택적으로 필요한 경우에 사용**
+- **생성자에 모든 의존성을 기술하면 과도하게 복잡해질 수 있는 것**을 선택적으로 **나눠 주입 할 수 있게 부담을 덜어줌**
+- **생성자 주입 방법**과 **Setter 주입 방법**을 적절하게 상황에 맞게 분배하여 사용
+
+**단점**
+- 의존성 주입 대상 필드가 final 선언 불가
+
+
+
 
 **생성자에 @Autowired 명시 (스프링 4.3 부터는 생략가능)**
 
@@ -194,7 +424,87 @@ public class TestService {
 - List로 같은 타입의 모든 bean을 주입받을 수 있다.
 
 
+#### @Autowired 사용시 주의 사항
 
+**1) 해당 타입의 빈이 없는 경우**
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookService {
+
+    BookRepository bookRepository;
+
+    @Autowired
+    public BookService(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+}
+```
+
+- 생성자에 대해 Autowired 어노테이션이 있는 상태이다. 
+- **BookRepository**가 빈으로 등록되어 있지 않다고 가정하면 **생성자에서 에러가 발생**한다. 
+- 이유는 Autowired가 의존성을 주입하기 위해서는 **빈이 등록되어 있는 객체중에서 찾는데** BookRepository라는 객체는 빈으로 등록되어 있지 않기 때문에 의존성 주입에 실패해서 에러가 발생한다. (Autowired의 기본값이 true이기 때문이다) 
+
+ 
+ ```java
+ import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookService {
+
+    BookRepository bookRepository;
+
+    @Autowired
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+}
+ ```
+ 
+ - 현재 BookRepository는 빈으로 등록되어 있지 않다고 가정하고, **Autowired가 붙은 setter에서 여전히 에러가 발생**한다. 
+ - 여기서 하나 궁금한 것은 **이번에는 setter인데** BookService의 빈은 등록할 수 있지 않나? 
+ * (생성자에 @Autowired가 설정되어 있고, 필요한 의존 객체가 bean으로 등록되어 있지 않은 경우는, 애초에 생성자의 실행이 불가능하여 생성 자체가 안되어서 빈으로 생성할 수 없어서 빈으로 등록 자체가 안되는 듯)
+ 
+ - 맞다. **BookSevice는 빈으로 등록할 수 있다.** 그리고 Autowired가 기본값이 true라고 했는데 그러면 false로 하면 어떻게 될까? 
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookService {
+
+    BookRepository bookRepository;
+    
+    @Autowired(required = false)   // @Autorired의 required 속성을 false로 지정.
+    public void setBookRepository(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+}
+```
+ 
+- 위와 같이 쓴다면 **BookService의 객체는 빈으로 등록이 되지만** (@Service 어노테이션 때문에) BookRepository는 빈으로 등록되지 않게 된다. (required = false이기 때문이다) 그리고 Autowired를 사용할 수 있는 곳이 필드가 하나 더 있다. 
+
+```java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookService {
+
+    @Autowired(required = false)
+    BookRepository bookRepository;
+}
+```
+
+- 위와 같이 필드에도 사용할 수 있다. 
+- setter와 필드에 Autowired를 사용하게 되면 만약 **BookRepository가 빈으로 등록되어 있지 않다 해도** BookService는 빈으로 등록이 가능하다. 
+- 하지만 **생성자에 Autowired를 쓴 상황에서** **BookRepository가 빈으로 등록되어 있지 않다면 BookService도 빈으로 등록되지 못하는 경우가 생긴다. 
+**
 
 ### 📜 MVC 패턴이란?
 -	Model – View – Controller의 약자
