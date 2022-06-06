@@ -138,6 +138,7 @@ public class ExampleRepository implements TestRepository {
 - 해당 타입의 bean 모두 주입받기
 - @Qulifier(bean id)
 
+<br>
 **1. @Primary**
 - @Primary Annotation은 같은 타입의 bean이 여러 개 주입될 경우 @Primary가 붙은 bean을 주입하겠다는 의미를 가지고 있다.
 
@@ -160,6 +161,7 @@ public class ExampleRepository implements TestRepository {
 - @Repository 옆에 명시
 - 같은 타입의 TestRepository가 주입되었을 때 MyTestRepository가 주입된다.
 
+<br>
 **2. @Qulifier**
 
 - bean의 ID로 지정을 해주는 것 같다.
@@ -177,6 +179,7 @@ public class TestService {
 - @Primary와 마찬가지로 MyTestRepository가 주입된다.
 - @Primary가 @Qulifier보다 Type safe 하기 때문에 @Primary를 사용하는 것을 추천
 
+<br>
 **3. 해당 타입의 bean 모두 주입**
 
 '''java
