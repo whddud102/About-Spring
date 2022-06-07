@@ -751,3 +751,22 @@ public class BookService {
     - DB 서버의 부하를 줄이고 약간의 최적화를 할 수 있다.
     - 코드를 접하는 사람들이 직관적으로 보기에도 해당 메서드는 READ 동작만 수행할 것이라고 예상 가능.
 
+
+#### 📜 MyBatis
+
+**MyBatis에서 resultType에 사용할 수 있는 값들**
+- 자주 사용하는 자료형에 대해서 미리 지정된 별칭을 이용
+    ex) string -> String
+        arrayList -> ArrayList
+	hashMap -> HashMap
+- 또는 특정 클래스의 풀 경로를 입력하여 해당 클래스의 객체에 데이터를 담아서 반환
+    ex) resultType = "com.dao.MyDAO"
+    
+- 또는 MyBatis-config.xml 에 특정 클래스에 대해 별칭을 지정 후, 그 별칭을 이용해서 사용가능
+
+````xml
+  <typeAlias>
+    <typeAlias alias = "DAO" type = "com.dao.MyDAO"/>	  
+  </typeAlias>	  
+```
+  별칭 지정 후, ex) resultType = "DAO" 로 사용 가능
