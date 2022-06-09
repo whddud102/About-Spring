@@ -770,3 +770,14 @@ public class BookService {
   </typeAlias>	  
 ```
   별칭 지정 후, ex) resultType = "DAO" 로 사용 가능
+
+
+
+#### Reuqset 전처리, 후처리
+
+**Filter ** : dispatcherServlet 전에 수행
+**Interceptor** : dispatcherServlet 후에 수행
+
+대략적인 프로세스 :
+	1. Interceptor or Filter 동작 구현
+	2. xml 설정 파일에 등록 및 탐지 패턴 작성
