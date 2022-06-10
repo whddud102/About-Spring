@@ -789,3 +789,7 @@ public class BookService {
 갑자기 mybatis에서 type Alaias를 등록하는 부분에서 잘 되던 typeAlias가 등록이 안되며 **Error registering typeAlias for 'xxx'. Cuase:java. ....** 에러 발생
 -> 해결 방법 : 프로젝트 클린 후 재빌드 하니깐 별도의 수정없이 해결
 
+* 이슈있는게 아니라 코드 수정 사항이 적용이 안돼는 것 같을 때에도 clean 후 재 빌드하면 적용이 됀다.
+
+
+
