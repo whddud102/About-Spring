@@ -769,6 +769,7 @@ public class BookService {
     <typeAlias alias = "DAO" type = "com.dao.MyDAO"/>	  
   </typeAlias>	  
 ```
+<br>
   별칭 지정 후, ex) resultType = "DAO" 로 사용 가능
 
 
