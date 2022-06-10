@@ -764,7 +764,7 @@ public class BookService {
     
 - 또는 MyBatis-config.xml 에 특정 클래스에 대해 별칭을 지정 후, 그 별칭을 이용해서 사용가능
 
-````xml
+```xml
   <typeAlias>
     <typeAlias alias = "DAO" type = "com.dao.MyDAO"/>	  
   </typeAlias>	  
