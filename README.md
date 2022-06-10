@@ -781,3 +781,10 @@ public class BookService {
 대략적인 프로세스 :
 	1. Interceptor or Filter 동작 구현
 	2. xml 설정 파일에 등록 및 탐지 패턴 작성
+
+
+#### 이슈 해결 기록
+
+갑자기 mybatis에서 type Alaias를 등록하는 부분에서 잘 되던 typeAlias가 등록이 안되며 **Error registering typeAlias for 'xxx'. Cuase:java. ....** 에러 발생
+-> 해결 방법 : 프로젝트 클린 후 재빌드 하니깐 별도의 수정없이 해결
+
