@@ -776,7 +776,7 @@ public class BookService {
 
 #### Reuqset 전처리, 후처리
 
-**Filter ** : dispatcherServlet 전에 수행
+**Filter** : dispatcherServlet 전에 수행
 **Interceptor** : dispatcherServlet 후에 수행
 
 대략적인 프로세스 :
