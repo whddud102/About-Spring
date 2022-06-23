@@ -784,6 +784,14 @@ public class BookService {
 	2. xml 설정 파일에 등록 및 탐지 패턴 작성
 
 
+#### JSTL 사용법 ####
+IF문 
+- 'test' 속성의 값이 참이면 if문 태그 안의 코드가 실행됌 
+
+```
+
+
+
 #### 이슈 해결 기록
 
 갑자기 mybatis에서 type Alaias를 등록하는 부분에서 잘 되던 typeAlias가 등록이 안되며 **Error registering typeAlias for 'xxx'. Cuase:java. ....** 에러 발생
