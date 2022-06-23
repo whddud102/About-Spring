@@ -784,12 +784,58 @@ public class BookService {
 	2. xml 설정 파일에 등록 및 탐지 패턴 작성
 
 
-#### JSTL 사용법 ####
-IF문 
+### JSTL 사용법
+#### IF문 
 - 'test' 속성의 값이 참이면 if문 태그 안의 코드가 실행됌 
 
 ```
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 
+<html>
+   <head>
+      <title><c:if> Tag Example</title>
+   </head>
+
+   <body>
+      <c:set var = "salary" scope = "session" value = "${2000*2}"/>
+      <c:if test = "${salary > 2000}">		// test 의 값이 true이면 안의 코드가 실행
+         <p>My salary is:  <c:out value = "${salary}"/><p>
+      </c:if>
+   </body>
+</html>
+```
+
+IF Else문
+- java에서 많이 사용하는 if~else 문의 경우 jstl에서는 <c:choose>를 이용합니다.
+```
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
+
+<html>
+   <head>
+      <title><c:choose> Tag Example</title>
+   </head>
+
+   <body>
+      <c:set var = "salary" scope = "session" value = "${2000*2}"/>
+      <p>Your salary is : <c:out value = "${salary}"/></p>
+      <c:choose>
+
+         <c:when test = "${salary <= 0}">	// IF ELSE 문의 역할
+            Salary is very low to survive.
+         </c:when>
+
+         <c:when test = "${salary > 1000}">     // IF ELSE 문의 역할
+            Salary is very good.
+         </c:when>
+
+         <c:otherwise>                          // Default의 역할
+            No comment sir...
+         </c:otherwise>
+      </c:choose>
+
+   </body>
+</html>
+```
 
 
 #### 이슈 해결 기록
