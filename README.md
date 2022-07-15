@@ -838,6 +838,37 @@ IF Else문
 ```
 
 
+### 리퍼러(Referrer)
+
+처음 방문하는 병원에서 진료를 위해 접수할 때 접수증을 유심히 본 적이 있는가? 항상 작성란 마지막 쯤엔 어디서 병원을 알게 됐는지 체크하거나 추천인의 이름을 적는 란이 있기 마련인데 이 것이 리퍼러와 같은 개념으로 이해하면 쉽다.
+
+HTTP 리퍼러(HTTP Referer)는 웹 브라우저로 월드 와이드 웹을 서핑할 때, 하이퍼링크를 통해서 각각의 사이트로 방문시 남는 흔적
+참조: https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Referer
+
+![image](https://user-images.githubusercontent.com/59597955/179127238-c9d33428-2b7c-49bf-b9d1-03cae78ba868.png)
+
+그럼 우리나라에 존재하는 웹사이트의 대표적인 유입처인 네이버 검색 결과 페이지를 통해 리퍼러에 대해 조금 더 알아보자.
+
+아래 URL은 PC 버전의 네이버 메인화면에서 ogaeng를 검색했을 때 등장하는 검색 결과의 URL이다.
+
+
+![image](https://user-images.githubusercontent.com/59597955/179127294-8357ef7b-7d57-40a7-a97f-9b96af11aa14.png)
+
+이때 검색 결과에 노출된 Ogaeng 블로그를 눌러 접속했다면 Ogaeng 블로그의 리퍼러는 위 URL이 된다.
+
+그런데 앞에 있던 웹페이지의 주소가 기억나지 않는다면 리퍼러를 확인하는 방법은 없을까?
+
+리퍼러를 확인하는 방법은 간단하다. 크롬 등의 브라우저에서 개발자 도구를 연다(크롬 기준 단축키: F12 혹은 cmd+alt+i) 그리고 Console 탭에 들어간 다음 이렇게 입력한다.
+
+document.referrer;
+
+그럼 현재 웹사이트의 리퍼러가 콘솔에 출력된다.
+
+##### 달라지는 리퍼러 정보
+그럼 우리 웹사이트에 접속하기 바로 직전에 있던 웹사이트의 주소대로 리퍼러가 수집될까? 대부분 그렇지만 항상 그렇지마는 않다. 그 예로 우리가 흔히 방문하는 네이버 블로그 포스트 주소를 한 번 살펴보자.
+
+
+
 #### 이슈 해결 기록
 
 갑자기 mybatis에서 type Alaias를 등록하는 부분에서 잘 되던 typeAlias가 등록이 안되며 **Error registering typeAlias for 'xxx'. Cuase:java. ....** 에러 발생
