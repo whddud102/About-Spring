@@ -869,6 +869,26 @@ document.referrer;
 
 
 
+### 개발 관련 내용
+
+#### [jQuery] attr, prop 함수 (태그 속성 값 취급)
+
+attr() : HTML의 attribute를 취급하는 함수 (HTML의 속성 값들을 취급한다.)
+prop() : JavaScript의 property를 취급하는 함수 (객체 내에 존재하는 속성 값들을 취급한다.)
+
+
+예제를 보며, 두 함수의 차이를 살펴보자<script>
+    $("#chk").attr('checked')); // 결과값 : checked
+    $("#chk").prop('checked')); // 결과값 : true
+</script>
+
+<input id="chk" type="checkbox" checked="checked" />
+
+attr과 prop을 사용하여, 체크박스의 checked 속성값을 가져와보자.
+먼저 attr 함수로 checked 속성 값을 가져오면 그 결과 값은 checked(HTML이 가지고 있는 속성의 text 값)로 나온다.
+하지만, prop 함수로 checked 속성 값을 가져오면 그 결과 값은 true(속성이 실제 의미하는 값)가 된다. 
+
+
 #### 이슈 해결 기록
 
 갑자기 mybatis에서 type Alaias를 등록하는 부분에서 잘 되던 typeAlias가 등록이 안되며 **Error registering typeAlias for 'xxx'. Cuase:java. ....** 에러 발생
